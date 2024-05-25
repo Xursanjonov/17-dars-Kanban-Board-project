@@ -6,10 +6,10 @@ import KarbonItem from "../KarbonItem";
 import { STATUS_ITEMS } from "../../static";
 import ModalForm from "../modal/ModalForm";
 import CreateStatusSection from "../CreateStatusSection";
+import { nanoid } from "nanoid";
 
-// let STATUS_ITEMS = ["ready", "working", "stuck", "done"]
 const KanbanBoard = () => {
-  const [statusSections, setStatusSections] = useState({ title: '', bgColor: 'purple' })
+  const [statusSections, setStatusSections] = useState(STATUS_ITEMS)
   const [data, setData] = useState(JSON.parse(localStorage.getItem('message')) || DATA)
   const [selectedStatus, setSelectedStatus] = useState(null)
   const [changeStatus, setChangeStatus] = useState(null)
@@ -18,6 +18,17 @@ const KanbanBoard = () => {
   const title = useRef(null)
   const desc = useRef(null)
 
+  // Status sections
+  const deleteStatus = useCallback((id) => {
+    if (confirm(`${id} Shu status o'chirilsinmi ? `)) {
+      let index = statusSections?.findIndex(el => el.id === id)
+      STATUS_ITEMS?.splice(index, 1)
+      setStatusSections([...STATUS_ITEMS])
+    }
+  }, [statusSections])
+  useEffect(() => {
+    localStorage.setItem('status', JSON.stringify(statusSections))
+  }, [statusSections])
   // karbon item delete
   const deleteItem = useCallback((id) => {
     if (confirm('Rostan o`chirmochimisiz ?')) {
@@ -69,7 +80,7 @@ const KanbanBoard = () => {
   const handaleNewStatus = (e) => {
     e.preventDefault()
     STATUS_ITEMS?.push(statusSections)
-    setStatusSections({ id: new Date().getTime(), title: '', bgColor: '' })
+    setStatusSections({ id: nanoid(), title: '', bgColor: '' })
   }
 
   return (
@@ -81,13 +92,13 @@ const KanbanBoard = () => {
           {
             STATUS_ITEMS.length ? (
               <div className="kanban__wrapper">
-                <KarbonBlock status_items={STATUS_ITEMS} items={memoFilterByStatus}
+                <KarbonBlock deleteStatus={deleteStatus} status_items={STATUS_ITEMS} items={memoFilterByStatus}
                   setNewStatus={setNewStatus} setSelectedStatus={setSelectedStatus} />
               </div>) : (
               <div className="kanban__newStatus">
                 <h1>Saytimizga hush kelibsiz Kuningizni hozirdan rejalashtirib oling</h1>
                 <button onClick={() => setNewStatus('dsBlock')} className="kanban__newStatus__btn"> Get Started </button>
-                  <CreateStatusSection handaleNewStatus={handaleNewStatus} newStatus={newStatus}
+                <CreateStatusSection handaleNewStatus={handaleNewStatus} newStatus={newStatus}
                   setNewStatus={setNewStatus} statusSections={statusSections} setStatusSections={setStatusSections} />
               </div>)}
         </div>

@@ -1,6 +1,6 @@
 import React, { memo } from 'react'
 
-const KarbonBlock = ({ status_items, items, setSelectedStatus, setNewStatus }) => {
+const KarbonBlock = ({ status_items, items, setSelectedStatus, setNewStatus, deleteStatus }) => {
 
     return status_items?.map(status => (
         <div key={status.id} className={`kanban__box ${status.bgColor}`}>
@@ -10,7 +10,7 @@ const KarbonBlock = ({ status_items, items, setSelectedStatus, setNewStatus }) =
             <div className="kanban__block">{items(status.title).length ? items(status.title) : (
                 <div className='kanban__delete'>
                     <h1 className='kanban__delete__title'>Statusda hozircha ma`lumot yo`q</h1>
-                    <button onClick={() => alert(`${status.title} status delete ?`)} className='kanban__delete__btn'>Status Delete</button>
+                    <button onClick={() => deleteStatus(status.id)} className='kanban__delete__btn'>Status Delete</button>
                 </div>
             )}</div>
             <button onClick={() => (setSelectedStatus(status.title), setNewStatus('dsBlock'))} className="kanban__add_btn">Add item</button>
